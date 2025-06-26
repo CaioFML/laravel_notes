@@ -8,7 +8,7 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        echo 'login';
+        return view('login');
     }
 
     public function logout(Request $request)
