@@ -8,3 +8,4 @@ Route::get('/', function () {
 });
 
 Route::get('/main/{value}', [MainController::class, 'index']);
+Route::get('/page2/{value}', [MainController::class, 'page2']);
