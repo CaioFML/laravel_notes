@@ -34,14 +34,29 @@ class AuthController extends Controller
 		$username = $request->input('text_username');
 		$password = $request->input('text_password');
 
-		// $users = User::all()->toArray();
+		// Check if the user exists
+		$user = User::where('username', $username)->where('deleted_at', NULL)->first();
 
-		// $userModel = new User();
-		// $users = $userModel->all()->toArray();
+		if (!$user) {
+			return redirect()->back()->withInput()->with(['loginError' => 'Username or password is incorrect']);
+		}
+
+		// Check if the password is correct
+		if (!password_verify($password, $user->password)) {
+			return redirect()->back()->withInput()->with(['loginError' => 'Username or password is incorrect']);
+		}
+
+		$user->last_login = now();
+		$user->save();
+
+		session(['user' => [
+			'id' => $user->id,
+			'username' => $user->username,
+			'last_login' => $user->last_login,
+		]]);
 
 		echo '<pre>';
-		print_r($users);
-		echo '</pre>';
+		print_r($user);
 	}
 
 	public function logout(Request $request)
