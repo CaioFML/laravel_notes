@@ -61,6 +61,10 @@ class AuthController extends Controller
 
 	public function logout(Request $request)
 	{
-		echo 'logout';
+		// Clear the session
+		session()->forget('user');
+
+		// Redirect to the login page
+		return redirect()->route('login')->with('message', 'You have been logged out successfully.');
 	}
 }
