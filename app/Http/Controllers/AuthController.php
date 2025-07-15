@@ -55,8 +55,9 @@ class AuthController extends Controller
 			'last_login' => $user->last_login,
 		]]);
 
-		echo '<pre>';
-		print_r($user);
+		return redirect()->to('/')
+			->with('message', 'You have been logged in successfully.')
+			->withInput(['text_username' => $username]);
 	}
 
 	public function logout(Request $request)

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 class MainController extends Controller
 {
   public function index() {
-    echo '<h1>Welcome to the Main Page</h1>';
+    return view('home');
   }
 
   public function newNote() {
