@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
+use App\Models\User;
 use App\Services\Operations;
 
 class MainController extends Controller
@@ -16,7 +17,22 @@ class MainController extends Controller
   }
 
   public function newNote() {
-    echo '<h1>Create a New Note</h1>';
+    return view('new_note');
+  }
+
+  public function newNoteSubmit() {
+    $data = request()->validate([
+      'title' => 'required|string|max:255',
+      'content' => 'required|string',
+    ]);
+
+    $note = new Note();
+    $note->title = $data['title'];
+    $note->content = $data['content'];
+    $note->user_id = session('user.id');
+    $note->save();
+
+    return redirect()->route('home')->with('message', 'Note created successfully.');
   }
 
   public function editNote($id) {
