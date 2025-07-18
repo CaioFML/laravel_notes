@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 
 class MainController extends Controller
@@ -19,25 +20,17 @@ class MainController extends Controller
   }
 
   public function editNote($id) {
-    try {
-      $id = Crypt::decrypt($id);
+    $note = Note::find($this->decryptId($id));
 
-      $note = Note::find($id);
-
-      if (!$note) {
-        return redirect()->route('home')->with('error', 'Note not found.');
-      }
-
-      return view('editNote', ['note' => $note]);
-    } catch (\Exception $e) {
-      return redirect()->route('home')->with('error', 'Invalid note ID.');
+    if (!$note) {
+      return redirect()->route('home')->with('error', 'Note not found.');
     }
 
+    return view('editNote', ['note' => $note]);
   }
 
   public function deleteNote($id) {
-    $id = Crypt::decrypt($id);
-    $note = Note::find($id);
+    $note = Note::find($this->decryptId($id));
 
     if (!$note) {
       return redirect()->route('home')->with('error', 'Note not found.');
@@ -46,5 +39,13 @@ class MainController extends Controller
     $note->delete();
 
     return redirect()->route('home')->with('message', 'Note deleted successfully.');
+  }
+
+  private function decryptId($id) {
+    try {
+      return Crypt::decrypt($id);
+    } catch (DecryptException $e) {
+      return redirect()->route('home')->with('error', 'Invalid note ID.');
+    }
   }
 }
